@@ -154,6 +154,41 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/actions/index.js":
+/*!******************************!*\
+  !*** ./src/actions/index.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _constants = __webpack_require__(/*! ../constants */ "./src/constants/index.js");
+
+var _constants2 = _interopRequireDefault(_constants);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+
+	currentUserReceived: function currentUserReceived(user) {
+		return {
+			type: 'CURRENT_USER_RECEIVED',
+			data: user
+		};
+	}
+
+	// Action 'TYPE' is registered in 'REDUCER', which is processed into the 'STORE'
+
+};
+
+/***/ }),
+
 /***/ "./src/components/Intro.js":
 /*!*********************************!*\
   !*** ./src/components/Intro.js ***!
@@ -400,6 +435,12 @@ var _react2 = _interopRequireDefault(_react);
 
 var _utils = __webpack_require__(/*! ../../utils */ "./src/utils/index.js");
 
+var _reactRedux = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+
+var _actions = __webpack_require__(/*! ../../actions */ "./src/actions/index.js");
+
+var _actions2 = _interopRequireDefault(_actions);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -443,6 +484,8 @@ var Auth = function (_Component) {
             console.log('REGISTER: ' + JSON.stringify(this.state.vistor));
             _utils.HTTP.post('/auth/register', this.state.vistor).then(function (data) {
                 console.log('RESPONSE: ' + JSON.stringify(data));
+                // Current user
+                var user = data.user;
             }).catch(function (err) {
                 console.log('ERROR: ' + err.message);
             });
@@ -450,10 +493,15 @@ var Auth = function (_Component) {
     }, {
         key: 'login',
         value: function login(event) {
+            var _this2 = this;
+
             event.preventDefault();
             console.log('LOGIN: ' + JSON.stringify(this.state.vistor));
+
             _utils.HTTP.post('/auth/login', this.state.vistor).then(function (data) {
                 console.log('RESPONSE: ' + JSON.stringify(data));
+                var user = data.user;
+                _this2.props.currentUserReceived(user);
             }).catch(function (err) {
                 console.log('ERROR: ' + err.message);
             });
@@ -461,6 +509,9 @@ var Auth = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            var currentUser = this.props.user.currentUser; // can be null
+
+
             return _react2.default.createElement(
                 'div',
                 { className: 'container' },
@@ -469,7 +520,7 @@ var Auth = function (_Component) {
                     { className: 'row' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'col-md-6' },
+                        { className: 'col-md-4' },
                         _react2.default.createElement(
                             'h1',
                             null,
@@ -480,7 +531,7 @@ var Auth = function (_Component) {
                             null,
                             _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'username'), className: 'form-control', type: 'text', placeholder: 'Username' }),
                             _react2.default.createElement('br', null),
-                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'passworld', placeholder: 'Password' }),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'password', placeholder: 'Password' }),
                             _react2.default.createElement('br', null),
                             _react2.default.createElement(
                                 'button',
@@ -499,13 +550,23 @@ var Auth = function (_Component) {
                             null,
                             _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'username'), className: 'form-control', type: 'text', placeholder: 'Username' }),
                             _react2.default.createElement('br', null),
-                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'passworld', placeholder: 'Password' }),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'password', placeholder: 'Password' }),
                             _react2.default.createElement('br', null),
                             _react2.default.createElement(
                                 'button',
                                 { onClick: this.login.bind(this) },
                                 'Login'
                             )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'col-md-6' },
+                        currentUser == null ? null : _react2.default.createElement(
+                            'h1',
+                            null,
+                            'Welcome ',
+                            currentUser.username
                         )
                     )
                 )
@@ -516,7 +577,35 @@ var Auth = function (_Component) {
     return Auth;
 }(_react.Component);
 
-exports.default = Auth;
+// Make this component connect to the store (two functions)
+
+// 1. Connect REDUCERS AND STORES
+// Which reducer (userReducer)
+// Store is already bind to the userReducer (reducer)
+// User key from the store
+
+
+var stateToProps = function stateToProps(state) {
+    return {
+        user: state.user
+    };
+};
+
+// 2. Connect ACTIONS
+// Actions to this Component.
+var dispatchToProps = function dispatchToProps(dispatch) {
+    return {
+        currentUserReceived: function currentUserReceived(user) {
+            return dispatch(_actions2.default.currentUserReceived(user));
+        }
+    };
+};
+
+// Connect the auth component to the redux store (#1) and actions for dispatch (#2)
+// This component now receives two new properties
+// 1. user 
+// 2. currentUserReceived
+exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Auth);
 
 /***/ }),
 
@@ -671,13 +760,6 @@ var _constants2 = _interopRequireDefault(_constants);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-	This is a sample reducer or user management. If you remove 
-	and use your own reducers, remember to update the store 
-	file (../stores/index.js) with your reducers.
-* * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*/
-
 var initialState = {
 	all: null,
 	currentUser: null // signed in user
@@ -691,18 +773,10 @@ exports.default = function () {
 
 	switch (action.type) {
 
-		case _constants2.default.CURRENT_USER_RECEIVED:
+		case 'CURRENT_USER_RECEIVED':
+			// data represents currently logged in user.
+			console.log('CURRENT_USER_RECEIVED: ' + JSON.stringify(action.data));
 			newState['currentUser'] = action.data;
-			return newState;
-
-		case _constants2.default.USERS_RECEIVED:
-			newState['all'] = action.data;
-			return newState;
-
-		case _constants2.default.USER_CREATED:
-			var array = newState.all ? Object.assign([], newState.all) : [];
-			array.unshift(action.data);
-			newState['all'] = array;
 			return newState;
 
 		default:
@@ -735,13 +809,6 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 var _reducers = __webpack_require__(/*! ../reducers */ "./src/reducers/index.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-	This is a store with one reducer: userReducer. When 
-	adding more reducers, make sure to include them in 
-	line 3 (above) and line 18 (below):
-* * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*/
 
 var store;
 exports.default = {

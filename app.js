@@ -12,7 +12,7 @@ const config = {
 	views: 'views', 		// Set views directory 
 	static: 'public', 		// Set static assets directory
 	db: { 					// Database configuration. Remember to set env variables in .env file: MONGODB_URI, PROD_MONGODB_URI
-		url: (process.env.TURBO_ENV == 'dev') ? 'mongodb://localhost/user-auth-demo' : process.env.PROD_MONGODB_URI,
+		url: (process.env.TURBO_ENV == 'dev') ? 'mongodb://localhost:27017/user-auth-demo' : process.env.PROD_MONGODB_URI,
 		type: 'mongo',
 		onError: (err) => {
 			console.log('DB Connection Failed!')
