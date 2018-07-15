@@ -398,6 +398,8 @@ var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _utils = __webpack_require__(/*! ../../utils */ "./src/utils/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -424,7 +426,7 @@ var Auth = function (_Component) {
     }
 
     _createClass(Auth, [{
-        key: "updateVisitor",
+        key: 'updateVisitor',
         value: function updateVisitor(attr, event) {
             console.log(attr + ' == ' + event.target.value);
             var updatedVisitor = Object.assign({}, this.state.vistor);
@@ -435,64 +437,74 @@ var Auth = function (_Component) {
             });
         }
     }, {
-        key: "register",
+        key: 'register',
         value: function register(event) {
             event.preventDefault();
             console.log('REGISTER: ' + JSON.stringify(this.state.vistor));
+            _utils.HTTP.post('/auth/register', this.state.vistor).then(function (data) {
+                console.log('RESPONSE: ' + JSON.stringify(data));
+            }).catch(function (err) {
+                console.log('ERROR: ' + err.message);
+            });
         }
     }, {
-        key: "login",
+        key: 'login',
         value: function login(event) {
             event.preventDefault();
             console.log('LOGIN: ' + JSON.stringify(this.state.vistor));
+            _utils.HTTP.post('/auth/login', this.state.vistor).then(function (data) {
+                console.log('RESPONSE: ' + JSON.stringify(data));
+            }).catch(function (err) {
+                console.log('ERROR: ' + err.message);
+            });
         }
     }, {
-        key: "render",
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                "div",
-                { className: "container" },
+                'div',
+                { className: 'container' },
                 _react2.default.createElement(
-                    "div",
-                    { className: "row" },
+                    'div',
+                    { className: 'row' },
                     _react2.default.createElement(
-                        "div",
-                        { className: "col-md-6" },
+                        'div',
+                        { className: 'col-md-6' },
                         _react2.default.createElement(
-                            "h1",
+                            'h1',
                             null,
-                            "Register"
+                            'Register'
                         ),
                         _react2.default.createElement(
-                            "form",
+                            'form',
                             null,
-                            _react2.default.createElement("input", { onChange: this.updateVisitor.bind(this, 'username'), className: "form-control", type: "text", placeholder: "Username" }),
-                            _react2.default.createElement("br", null),
-                            _react2.default.createElement("input", { onChange: this.updateVisitor.bind(this, 'password'), className: "form-control", type: "passworld", placeholder: "Password" }),
-                            _react2.default.createElement("br", null),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'username'), className: 'form-control', type: 'text', placeholder: 'Username' }),
+                            _react2.default.createElement('br', null),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'passworld', placeholder: 'Password' }),
+                            _react2.default.createElement('br', null),
                             _react2.default.createElement(
-                                "button",
+                                'button',
                                 { onClick: this.register.bind(this) },
-                                "Join"
+                                'Join'
                             )
                         ),
-                        _react2.default.createElement("hr", null),
+                        _react2.default.createElement('hr', null),
                         _react2.default.createElement(
-                            "h1",
+                            'h1',
                             null,
-                            "Login"
+                            'Login'
                         ),
                         _react2.default.createElement(
-                            "form",
+                            'form',
                             null,
-                            _react2.default.createElement("input", { onChange: this.updateVisitor.bind(this, 'username'), className: "form-control", type: "text", placeholder: "Username" }),
-                            _react2.default.createElement("br", null),
-                            _react2.default.createElement("input", { onChange: this.updateVisitor.bind(this, 'password'), className: "form-control", type: "passworld", placeholder: "Password" }),
-                            _react2.default.createElement("br", null),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'username'), className: 'form-control', type: 'text', placeholder: 'Username' }),
+                            _react2.default.createElement('br', null),
+                            _react2.default.createElement('input', { onChange: this.updateVisitor.bind(this, 'password'), className: 'form-control', type: 'passworld', placeholder: 'Password' }),
+                            _react2.default.createElement('br', null),
                             _react2.default.createElement(
-                                "button",
+                                'button',
                                 { onClick: this.login.bind(this) },
-                                "Login"
+                                'Login'
                             )
                         )
                     )
@@ -755,6 +767,165 @@ exports.default = {
 	currentStore: function currentStore() {
 		return store;
 	}
+};
+
+/***/ }),
+
+/***/ "./src/utils/HTTP.js":
+/*!***************************!*\
+  !*** ./src/utils/HTTP.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _superagent = __webpack_require__(/*! superagent */ "./node_modules/superagent/lib/client.js");
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+
+    post: function post(endpoint, body) {
+        return new Promise(function (resolve, reject) {
+
+            _superagent2.default.post(endpoint).send(body).set('Accept', 'application/json').end(function (err, response) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(response.body);
+            });
+        });
+    },
+
+    get: function get(endpoint, params) {
+        return new Promise(function (resolve, reject) {
+
+            _superagent2.default.get(endpoint).query(params).set('Accept', 'application/json').end(function (err, response) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(response.body);
+            });
+        });
+    }
+};
+
+/***/ }),
+
+/***/ "./src/utils/ServerEntry.js":
+/*!**********************************!*\
+  !*** ./src/utils/ServerEntry.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (props) {
+
+	return _react2.default.createElement(
+		_reactRedux.Provider,
+		{ store: props.store },
+		props.component
+	);
+};
+
+/***/ }),
+
+/***/ "./src/utils/index.js":
+/*!****************************!*\
+  !*** ./src/utils/index.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.renderComponents = exports.ServerEntry = exports.HTTP = undefined;
+
+var _HTTP = __webpack_require__(/*! ./HTTP */ "./src/utils/HTTP.js");
+
+var _HTTP2 = _interopRequireDefault(_HTTP);
+
+var _ServerEntry = __webpack_require__(/*! ./ServerEntry */ "./src/utils/ServerEntry.js");
+
+var _ServerEntry2 = _interopRequireDefault(_ServerEntry);
+
+var _renderComponents = __webpack_require__(/*! ./renderComponents */ "./src/utils/renderComponents.js");
+
+var _renderComponents2 = _interopRequireDefault(_renderComponents);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.HTTP = _HTTP2.default;
+exports.ServerEntry = _ServerEntry2.default;
+exports.renderComponents = _renderComponents2.default;
+
+/***/ }),
+
+/***/ "./src/utils/renderComponents.js":
+/*!***************************************!*\
+  !*** ./src/utils/renderComponents.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _server = __webpack_require__(/*! react-dom/server */ "./node_modules/react-dom/server.browser.js");
+
+var _server2 = _interopRequireDefault(_server);
+
+var _ServerEntry = __webpack_require__(/*! ./ServerEntry */ "./src/utils/ServerEntry.js");
+
+var _ServerEntry2 = _interopRequireDefault(_ServerEntry);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (initialState, component) {
+	var app = _react2.default.createElement(component);
+	var provider = _react2.default.createElement(_ServerEntry2.default, { component: app, store: initialState });
+
+	return {
+		react: _server2.default.renderToString(provider),
+		initial: JSON.stringify(initialState.getState())
+	};
 };
 
 /***/ })

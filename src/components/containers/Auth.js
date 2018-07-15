@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { HTTP } from '../../utils';
 
 class Auth extends Component {
     constructor() {
@@ -24,11 +25,25 @@ class Auth extends Component {
     register(event) {
         event.preventDefault()
         console.log('REGISTER: ' + JSON.stringify(this.state.vistor))
+        HTTP.post('/auth/register', this.state.vistor)
+        .then(data => {
+            console.log('RESPONSE: ' + JSON.stringify(data))
+        })
+        .catch(err => {
+            console.log('ERROR: ' + err.message)
+        })
     }
 
     login(event) {
         event.preventDefault()
         console.log('LOGIN: ' + JSON.stringify(this.state.vistor))
+        HTTP.post('/auth/login', this.state.vistor)
+        .then(data => {
+            console.log('RESPONSE: ' + JSON.stringify(data))
+        })
+        .catch(err => {
+            console.log('ERROR: ' + err.message)
+        })
     }
 
     render() {

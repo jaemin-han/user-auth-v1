@@ -1,11 +1,9 @@
-import TurboClient from './TurboClient'
+import HTTP from './HTTP'
 import ServerEntry from './ServerEntry'
 import renderComponents from './renderComponents'
 
 export {
-
-	TurboClient,
+	HTTP,
 	ServerEntry,
 	renderComponents
-
 }
