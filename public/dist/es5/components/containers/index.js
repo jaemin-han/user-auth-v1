@@ -2,16 +2,12 @@
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * *
-	Export your container components here. The Users
-	container is just an example and you will likely
-	remove it in favor of your own containers. 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*/
+var Auth = _interopRequire(require("./Auth"));
 
-var Users = _interopRequire(require("./Users"));
+exports.Auth = Auth;
 
-exports.Users = Users;
+
+// Exporting 'Auth' component
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
