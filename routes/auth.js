@@ -63,7 +63,7 @@ router.post('/register', (req, res) => {
         req.vertexSession.user = {id: profile._id.toString()}
         res.json({
             confirmation: 'succeess',
-            data: profile
+            user: profile
         })
     })
 })

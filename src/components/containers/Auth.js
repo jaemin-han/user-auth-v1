@@ -7,31 +7,49 @@ class Auth extends Component {
     constructor() {
         super()
         this.state = {
-            vistor: {
+            visitor: {
                 username: "",
                 password: ""
             }
         }
     }
 
+    // Keep in mind, Asynchronous call inside the component - not recommended
+    // Ran action asynchronously on the callbacks (easier to grasp conceptually)
+    // Once the component shows up, whatever you write inside this function will be immediately invoked.
+
+    // Async action must be done in called inside the actions file itself - higher react development
+    componentDidMount() {
+        HTTP.get('/auth/currentuser', null)
+        .then(response => {
+            console.log('CURRENT USER: ' + JSON.stringify(response.user))
+            this.props.currentUserReceived(response.user)
+        })
+        .catch(err => {
+
+        })
+
+    }
+
     updateVisitor(attr, event) {
         console.log(attr + ' == ' + event.target.value)
-        let updatedVisitor = Object.assign({}, this.state.vistor)
+        let updatedVisitor = Object.assign({}, this.state.visitor)
         updatedVisitor[attr] = event.target.value
         
         this.setState({
-            vistor: updatedVisitor
+            visitor: updatedVisitor
         })
     }
 
     register(event) {
         event.preventDefault()
-        console.log('REGISTER: ' + JSON.stringify(this.state.vistor))
-        HTTP.post('/auth/register', this.state.vistor)
+        console.log('REGISTER: ' + JSON.stringify(this.state.visitor))
+        HTTP.post('/auth/register', this.state.visitor)
         .then(data => {
             console.log('RESPONSE: ' + JSON.stringify(data))
             // Current user
             const user = data.user
+            this.props.currentUserReceived(user)
         })
         .catch(err => {
             console.log('ERROR: ' + err.message)
@@ -40,9 +58,9 @@ class Auth extends Component {
 
     login(event) {
         event.preventDefault()
-        console.log('LOGIN: ' + JSON.stringify(this.state.vistor))
+        console.log('LOGIN: ' + JSON.stringify(this.state.visitor))
         
-        HTTP.post('/auth/login', this.state.vistor)
+        HTTP.post('/auth/login', this.state.visitor)
         .then(data => {
             console.log('RESPONSE: ' + JSON.stringify(data))
             const user = data.user
@@ -55,7 +73,7 @@ class Auth extends Component {
 
     render() {
         const currentUser = this.props.user.currentUser // can be null
-
+        
 
         return (
             <div className="container">

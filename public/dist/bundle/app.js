@@ -458,7 +458,7 @@ var Auth = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Auth.__proto__ || Object.getPrototypeOf(Auth)).call(this));
 
         _this.state = {
-            vistor: {
+            visitor: {
                 username: "",
                 password: ""
             }
@@ -466,26 +466,46 @@ var Auth = function (_Component) {
         return _this;
     }
 
+    // Keep in mind, Asynchronous call inside the component - not recommended
+    // Ran action asynchronously on the callbacks (easier to grasp conceptually)
+    // Once the component shows up, whatever you write inside this function will be immediately invoked.
+
+    // Async action must be done in called inside the actions file itself - higher react development
+
+
     _createClass(Auth, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            _utils.HTTP.get('/auth/currentuser', null).then(function (response) {
+                console.log('CURRENT USER: ' + JSON.stringify(response.user));
+                _this2.props.currentUserReceived(response.user);
+            }).catch(function (err) {});
+        }
+    }, {
         key: 'updateVisitor',
         value: function updateVisitor(attr, event) {
             console.log(attr + ' == ' + event.target.value);
-            var updatedVisitor = Object.assign({}, this.state.vistor);
+            var updatedVisitor = Object.assign({}, this.state.visitor);
             updatedVisitor[attr] = event.target.value;
 
             this.setState({
-                vistor: updatedVisitor
+                visitor: updatedVisitor
             });
         }
     }, {
         key: 'register',
         value: function register(event) {
+            var _this3 = this;
+
             event.preventDefault();
-            console.log('REGISTER: ' + JSON.stringify(this.state.vistor));
-            _utils.HTTP.post('/auth/register', this.state.vistor).then(function (data) {
+            console.log('REGISTER: ' + JSON.stringify(this.state.visitor));
+            _utils.HTTP.post('/auth/register', this.state.visitor).then(function (data) {
                 console.log('RESPONSE: ' + JSON.stringify(data));
                 // Current user
                 var user = data.user;
+                _this3.props.currentUserReceived(user);
             }).catch(function (err) {
                 console.log('ERROR: ' + err.message);
             });
@@ -493,15 +513,15 @@ var Auth = function (_Component) {
     }, {
         key: 'login',
         value: function login(event) {
-            var _this2 = this;
+            var _this4 = this;
 
             event.preventDefault();
-            console.log('LOGIN: ' + JSON.stringify(this.state.vistor));
+            console.log('LOGIN: ' + JSON.stringify(this.state.visitor));
 
-            _utils.HTTP.post('/auth/login', this.state.vistor).then(function (data) {
+            _utils.HTTP.post('/auth/login', this.state.visitor).then(function (data) {
                 console.log('RESPONSE: ' + JSON.stringify(data));
                 var user = data.user;
-                _this2.props.currentUserReceived(user);
+                _this4.props.currentUserReceived(user);
             }).catch(function (err) {
                 console.log('ERROR: ' + err.message);
             });
