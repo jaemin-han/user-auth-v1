@@ -33,3 +33,8 @@ export default {
 		return store
 	}
 }
+
+	// - Store is the central objects that holds the state of the application. 
+	// The store is created by using the createStore method from the Redux Library. 
+	// I need to pass in the reducer function as a parameter. 
+	// From there, I will be ready to dispatch a action to the store which is handled by the reducer.

@@ -20,3 +20,9 @@ export default (state = initialState, action) => {
 			return state
 	}
 }
+
+// Reducers are the most important building block and it's important to understand the concept
+// * Reducers are pure js functions that take the current application state and an action object and return a new application state
+// The important thing to notice here is that the state is not changed directly
+
+// Instead a new state object (based on the old state) is created and the update is done to the new state.
